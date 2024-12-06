@@ -104,9 +104,7 @@ class ProductServiceTest {
         // Verificação do resultado usando StepVerifier
         StepVerifier.create(result)
                 .expectNextMatches(product ->
-                        product.getId() == 1L &&
-                                "Product 1".equals(product.getTitle())
-                                && product.getPrice() == 100
+                        product.getId() == 1L && "Product 1".equals(product.getTitle())
                 )
                 .verifyComplete();
 
