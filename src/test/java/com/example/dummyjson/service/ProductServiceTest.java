@@ -49,10 +49,17 @@ class ProductServiceTest {
         mockResponse.setProducts(ProductFixture.validProductList);
 
         // Configuração do comportamento dos mocks
-        when(webClientMock.get()).thenReturn(requestHeadersUriSpecMock);
-        when(requestHeadersUriSpecMock.uri(anyString())).thenReturn(requestHeadersSpecMock);
-        when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
-        when(responseSpecMock.bodyToMono(ProductListResponse.class)).thenReturn(Mono.just(mockResponse));
+        when(webClientMock.get())
+                .thenReturn(requestHeadersUriSpecMock);
+
+        when(requestHeadersUriSpecMock.uri(anyString()))
+                .thenReturn(requestHeadersSpecMock);
+
+        when(requestHeadersSpecMock.retrieve())
+                .thenReturn(responseSpecMock);
+
+        when(responseSpecMock.bodyToMono(ProductListResponse.class))
+                .thenReturn(Mono.just(mockResponse));
 
         // Execução do método a ser testado
         Mono<ProductListResponse> result = productService.getAllProducts();
@@ -79,10 +86,17 @@ class ProductServiceTest {
         Product mockProduct = ProductFixture.validProduct1;
 
         // Configuração do comportamento dos mocks
-        when(webClientMock.get()).thenReturn(requestHeadersUriSpecMock);
-        when(requestHeadersUriSpecMock.uri("/products/1")).thenReturn(requestHeadersSpecMock);
-        when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
-        when(responseSpecMock.bodyToMono(Product.class)).thenReturn(Mono.just(mockProduct));
+        when(webClientMock.get())
+                .thenReturn(requestHeadersUriSpecMock);
+
+        when(requestHeadersUriSpecMock.uri("/products/1"))
+                .thenReturn(requestHeadersSpecMock);
+
+        when(requestHeadersSpecMock.retrieve())
+                .thenReturn(responseSpecMock);
+
+        when(responseSpecMock.bodyToMono(Product.class))
+                .thenReturn(Mono.just(mockProduct));
 
         // Execução do método a ser testado
         Mono<Product> result = productService.getProductById(1L);
