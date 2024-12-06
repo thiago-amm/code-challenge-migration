@@ -1,54 +1,105 @@
 package com.example.dummyjson.service;
 
 import com.example.dummyjson.dto.Product;
+import com.example.dummyjson.dto.ProductListResponse;
+import com.example.dummyjson.fixture.ProductFixture;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.web.client.RestTemplate;
+import org.mockito.MockitoAnnotations;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec;
+import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
+import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
+import reactor.core.publisher.Mono;
+import reactor.test.StepVerifier;
 
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
+
+    @Mock
+    private WebClient webClientMock;
+
+    @Mock
+    private RequestHeadersUriSpec requestHeadersUriSpecMock;
+
+    @Mock
+    private RequestHeadersSpec requestHeadersSpecMock;
+
+    @Mock
+    private ResponseSpec responseSpecMock;
 
     @InjectMocks
     private ProductService productService;
 
-    @Mock
-    private RestTemplate restTemplate;
-
-    @Test
-    void testGetAllProductsDeprecated() {
-        Product product1 = new Product();
-        product1.setId(1L);
-        product1.setTitle("Product 1");
-
-        Product product2 = new Product();
-        product2.setId(2L);
-        product2.setTitle("Product 2");
-
-        Product[] products = {product1, product2};
-        when(restTemplate.getForObject("https://dummyjson.com/products", Product[].class)).thenReturn(products);
-
-        List<Product> result = productService.getAllProductsDeprecated();
-        assertEquals(2, result.size());
-        assertEquals("Product 1", result.get(0).getTitle());
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    void testGetProductByIdDeprecated() {
-        Product product = new Product();
-        product.setId(1L);
-        product.setTitle("Product 1");
+    void testGetAllProducts() {
+        // Mock da resposta esperada
+        ProductListResponse mockResponse = new ProductListResponse();
 
-        when(restTemplate.getForObject("https://dummyjson.com/products/1", Product.class)).thenReturn(product);
+        mockResponse.setProducts(ProductFixture.validProductList);
 
-        Product result = productService.getProductByIdDeprecated(1L);
-        assertEquals("Product 1", result.getTitle());
+        // Configuração do comportamento dos mocks
+        when(webClientMock.get()).thenReturn(requestHeadersUriSpecMock);
+        when(requestHeadersUriSpecMock.uri(anyString())).thenReturn(requestHeadersSpecMock);
+        when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
+        when(responseSpecMock.bodyToMono(ProductListResponse.class)).thenReturn(Mono.just(mockResponse));
+
+        // Execução do método a ser testado
+        Mono<ProductListResponse> result = productService.getAllProducts();
+
+        // Verificação do resultado usando StepVerifier
+        StepVerifier.create(result)
+                .expectNextMatches(response ->
+                        response.getProducts().size() == 2
+                                && "Product 1".equals(response.getProducts().get(0).getTitle())
+                                && "Product 2".equals(response.getProducts().get(1).getTitle())
+                )
+                .verifyComplete();
+
+        // Verificação das interações nos mocks
+        verify(webClientMock).get();
+        verify(requestHeadersUriSpecMock).uri("/products");
+        verify(requestHeadersSpecMock).retrieve();
+        verify(responseSpecMock).bodyToMono(ProductListResponse.class);
+    }
+
+    @Test
+    void testGetProductById() {
+        // Mock da resposta esperada
+        Product mockProduct = ProductFixture.validProduct1;
+
+        // Configuração do comportamento dos mocks
+        when(webClientMock.get()).thenReturn(requestHeadersUriSpecMock);
+        when(requestHeadersUriSpecMock.uri("/products/1")).thenReturn(requestHeadersSpecMock);
+        when(requestHeadersSpecMock.retrieve()).thenReturn(responseSpecMock);
+        when(responseSpecMock.bodyToMono(Product.class)).thenReturn(Mono.just(mockProduct));
+
+        // Execução do método a ser testado
+        Mono<Product> result = productService.getProductById(1L);
+
+        // Verificação do resultado usando StepVerifier
+        StepVerifier.create(result)
+                .expectNextMatches(product ->
+                        product.getId() == 1L &&
+                                "Product 1".equals(product.getTitle())
+                                && product.getPrice() == 100
+                )
+                .verifyComplete();
+
+        // Verificação das interações nos mocks
+        verify(webClientMock).get();
+        verify(requestHeadersUriSpecMock).uri("/products/1");
+        verify(requestHeadersSpecMock).retrieve();
+        verify(responseSpecMock).bodyToMono(Product.class);
     }
 }
