@@ -11,26 +11,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/products")
 public class ProductController {
 
     @Autowired
     private ProductService productService;
-
-    @Deprecated
-    @GetMapping("/deprecated")
-    public List<Product> getAllProductsDeprecated() {
-        return productService.getAllProductsDeprecated();
-    }
-
-    @Deprecated
-    @GetMapping("/deprecated/{id}")
-    public Product getProductByIdDeprecated(@PathVariable @NotNull Long id) {
-        return productService.getProductByIdDeprecated(id);
-    }
 
     /**
      * Busca 30 produtos cadastrados.
