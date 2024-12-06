@@ -1,55 +1,72 @@
 package com.example.dummyjson.controller;
 
 import com.example.dummyjson.dto.Product;
+import com.example.dummyjson.dto.ProductListResponse;
+import com.example.dummyjson.fixture.ProductFixture;
 import com.example.dummyjson.service.ProductService;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
 
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ProductControllerTest {
 
-    @InjectMocks
-    private ProductController productController;
+    @Autowired
+    private WebTestClient webTestClient;
 
-    @Mock
+    @MockBean
     private ProductService productService;
 
     @Test
-    void testGetAllProductsDeprecated() {
-        Product product1 = new Product();
-        product1.setId(1L);
-        product1.setTitle("Product 1");
+    void testGetAllProducts() {
+        ProductListResponse mockResponse = new ProductListResponse(ProductFixture.validProductList);
 
-        Product product2 = new Product();
-        product2.setId(2L);
-        product2.setTitle("Product 2");
+        when(productService.getAllProducts())
+                .thenReturn(Mono.just(mockResponse));
 
-        List<Product> products = Arrays.asList(product1, product2);
-        when(productService.getAllProductsDeprecated()).thenReturn(products);
+        // Executa o teste
+        webTestClient.get()
+                .uri("/api/products")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.products[0].id").isEqualTo(1)
+                .jsonPath("$.products[0].title").isEqualTo("Product 1")
+                .jsonPath("$.products[1].id").isEqualTo(2)
+                .jsonPath("$.products[1].title").isEqualTo("Product 2");
 
-        List<Product> result = productController.getAllProductsDeprecated();
-        assertEquals(2, result.size());
-        assertEquals("Product 1", result.get(0).getTitle());
+        // Verifica se o serviço foi chamado
+        verify(productService).getAllProducts();
     }
 
     @Test
-    void testGetProductByIdDeprecated() {
-        Product product = new Product();
-        product.setId(1L);
-        product.setTitle("Product 1");
+    void testGetProductById() {
+        // Mock da resposta
+        Product mockProduct = ProductFixture.validProduct1;
 
-        when(productService.getProductByIdDeprecated(1L)).thenReturn(product);
+        when(productService.getProductById(1L)).thenReturn(Mono.just(mockProduct));
 
-        Product result = productController.getProductByIdDeprecated(1L);
-        assertEquals("Product 1", result.getTitle());
+        // Executa o teste
+        webTestClient.get()
+                .uri("/api/products/1")
+                .accept(MediaType.APPLICATION_JSON)
+                .exchange()
+                .expectStatus().isOk()
+                .expectHeader().contentType(MediaType.APPLICATION_JSON)
+                .expectBody()
+                .jsonPath("$.id").isEqualTo(1)
+                .jsonPath("$.title").isEqualTo("Product 1");
+
+        // Verifica se o serviço foi chamado
+        verify(productService).getProductById(1L);
     }
 }
