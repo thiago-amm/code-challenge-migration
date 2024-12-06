@@ -24,7 +24,7 @@ class ProductControllerTest {
     private ProductService productService;
 
     @Test
-    void testGetAllProducts() {
+    void testGetAllProductsDeprecated() {
         Product product1 = new Product();
         product1.setId(1L);
         product1.setTitle("Product 1");
@@ -34,22 +34,22 @@ class ProductControllerTest {
         product2.setTitle("Product 2");
 
         List<Product> products = Arrays.asList(product1, product2);
-        when(productService.getAllProducts()).thenReturn(products);
+        when(productService.getAllProductsDeprecated()).thenReturn(products);
 
-        List<Product> result = productController.getAllProducts();
+        List<Product> result = productController.getAllProductsDeprecated();
         assertEquals(2, result.size());
         assertEquals("Product 1", result.get(0).getTitle());
     }
 
     @Test
-    void testGetProductById() {
+    void testGetProductByIdDeprecated() {
         Product product = new Product();
         product.setId(1L);
         product.setTitle("Product 1");
 
-        when(productService.getProductById(1L)).thenReturn(product);
+        when(productService.getProductByIdDeprecated(1L)).thenReturn(product);
 
-        Product result = productController.getProductById(1L);
+        Product result = productController.getProductByIdDeprecated(1L);
         assertEquals("Product 1", result.getTitle());
     }
 }

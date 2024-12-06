@@ -23,7 +23,7 @@ class ProductServiceTest {
     private RestTemplate restTemplate;
 
     @Test
-    void testGetAllProducts() {
+    void testGetAllProductsDeprecated() {
         Product product1 = new Product();
         product1.setId(1L);
         product1.setTitle("Product 1");
@@ -35,20 +35,20 @@ class ProductServiceTest {
         Product[] products = {product1, product2};
         when(restTemplate.getForObject("https://dummyjson.com/products", Product[].class)).thenReturn(products);
 
-        List<Product> result = productService.getAllProducts();
+        List<Product> result = productService.getAllProductsDeprecated();
         assertEquals(2, result.size());
         assertEquals("Product 1", result.get(0).getTitle());
     }
 
     @Test
-    void testGetProductById() {
+    void testGetProductByIdDeprecated() {
         Product product = new Product();
         product.setId(1L);
         product.setTitle("Product 1");
 
         when(restTemplate.getForObject("https://dummyjson.com/products/1", Product.class)).thenReturn(product);
 
-        Product result = productService.getProductById(1L);
+        Product result = productService.getProductByIdDeprecated(1L);
         assertEquals("Product 1", result.getTitle());
     }
 }
