@@ -6,8 +6,17 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 public class WebClientConfig {
+
+    public static final String BASE_URL = "https://dummyjson.com";
+
     @Bean
-    public WebClient webClient(WebClient.Builder builder) {
-        return builder.baseUrl("https://dummyjson.com").build();
+    public WebClient.Builder webClientBuilder() {
+        return WebClient.builder().baseUrl(BASE_URL);
     }
+
+    @Bean
+    public WebClient webClient(WebClient.Builder webClientBuilder) {
+        return webClientBuilder.build();
+    }
+
 }
