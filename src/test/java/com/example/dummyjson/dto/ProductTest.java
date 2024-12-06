@@ -1,9 +1,10 @@
 package com.example.dummyjson.dto;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 class ProductTest {
@@ -21,9 +22,9 @@ class ProductTest {
         product1.setDescription("A dummy description");
         product1.setPrice(Double.valueOf("2.1"));
 
-        Assertions.assertEquals(expectId, product1.getId());
-        Assertions.assertEquals(expectedTitle, product1.getTitle());
-        Assertions.assertEquals(expectedDescription, product1.getDescription());
-        Assertions.assertEquals(expectedPrice, product1.getPrice());
+        assertEquals(expectId, product1.getId());
+        assertEquals(expectedTitle, product1.getTitle());
+        assertEquals(expectedDescription, product1.getDescription());
+        assertEquals(expectedPrice, product1.getPrice());
     }
 }
