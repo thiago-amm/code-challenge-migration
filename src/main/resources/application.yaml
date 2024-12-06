@@ -1,4 +1,7 @@
 server:
+  port: 8080
+  servlet:
+    context-path: /dummyjson-client/api/1.1
   management:
     endpoints:
       web:
@@ -7,6 +10,3 @@ server:
     endpoint:
       health:
         show-details: always
-  port: 8080
-  servlet:
-    context-path: /dummyjson-client/api/1.1
