@@ -1,22 +1,20 @@
 package com.example.dummyjson.service;
 
 import com.example.dummyjson.dto.Product;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ProductServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ProductServiceTest {
 
     @InjectMocks
     private ProductService productService;
@@ -25,7 +23,7 @@ public class ProductServiceTest {
     private RestTemplate restTemplate;
 
     @Test
-    public void testGetAllProducts() {
+    void testGetAllProducts() {
         Product product1 = new Product();
         product1.setId(1L);
         product1.setTitle("Product 1");
@@ -43,7 +41,7 @@ public class ProductServiceTest {
     }
 
     @Test
-    public void testGetProductById() {
+    void testGetProductById() {
         Product product = new Product();
         product.setId(1L);
         product.setTitle("Product 1");
